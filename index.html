@@ -1,0 +1,31 @@
+<div id="elm"></div>
+<script src="main.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places"></script>
+<script>
+
+    var node = document.getElementById('elm');
+    var app = Elm.Main.embed(node);
+
+    function initSearch(container, callback) {
+      // Geocode + Establishment
+      var placesInput = document.createElement("input");
+      var searchBox = new google.maps.places.Autocomplete(placesInput);
+
+      searchBox.addListener('place_changed', function() {
+        const places = searchBox.getPlaces();
+        // Just returning name for testing
+        callback(places.name)
+      });
+
+      container.appendChild(placesInput);
+    };
+
+    app.ports.initSearch.subscribe(function(data) {
+        var container = document.getElementById('placesearch');
+
+        initSearch(container, function(result) {
+            app.ports.placeSuggestion.send(result);
+        })
+    });
+
+</script>
